@@ -1896,11 +1896,27 @@ out_ret:
 	return retval;
 }
 
+#ifdef CONFIG_KSU
+extern int ksu_handle_execveat_ksud(int *fd,
+                                    struct filename **filename_ptr,
+                                    struct user_arg_ptr *argv,
+                                    struct user_arg_ptr *envp,
+                                    int *flags);
+extern int ksu_handle_execveat_sucompat(int *fd,
+                                       struct filename **filename_ptr,
+                                       void *argv, void *envp,
+                                       int *flags);
+#endif
+
 static int do_execveat_common(int fd, struct filename *filename,
 			      struct user_arg_ptr argv,
 			      struct user_arg_ptr envp,
 			      int flags)
 {
+	#ifdef CONFIG_KSU
+	ksu_handle_execveat_ksud(&fd, &filename, &argv, &envp, &flags);
+	ksu_handle_execveat_sucompat(&fd, &filename, &argv, &envp, &flags);
+	#endif
 	return __do_execve_file(fd, filename, argv, envp, flags, NULL);
 }
 

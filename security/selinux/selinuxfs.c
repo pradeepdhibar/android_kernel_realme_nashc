@@ -235,12 +235,21 @@ static ssize_t sel_read_handle_status(struct file *filp, char __user *buf,
 				      size_t count, loff_t *ppos)
 {
 	struct page    *status = filp->private_data;
+	struct selinux_kernel_status snapshot;
+	void *kaddr;
+	int ret;
 
-	BUG_ON(!status);
+	if (!status)
+		return -EFAULT;
+
+	kaddr = page_address(status);
+	ret = probe_kernel_read(&snapshot, kaddr, sizeof(snapshot));
+	if (ret)
+		return ret;
 
 	return simple_read_from_buffer(buf, count, ppos,
-				       page_address(status),
-				       sizeof(struct selinux_kernel_status));
+				       &snapshot,
+				       sizeof(snapshot));
 }
 
 static int sel_mmap_handle_status(struct file *filp,

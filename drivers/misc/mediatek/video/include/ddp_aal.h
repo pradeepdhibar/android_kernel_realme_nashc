@@ -93,8 +93,6 @@ struct DISP_AAL_INITREG {
 	int blk_cnt_y_end;
 	int last_tile_x_flag;
 	int last_tile_y_flag;
-	/* Preserve vendor AAL userspace ABI: 288-byte INIT_REG */
-	int reserved[3];
 };
 
 struct DISP_DRE30_INIT {

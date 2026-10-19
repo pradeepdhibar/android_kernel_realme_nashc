@@ -1945,7 +1945,7 @@ static void lcm_get_params(struct LCM_PARAMS *params)
 #endif
 
 	params->hbm_en_time = 2;
-	params->hbm_dis_time = 0;
+	params->hbm_dis_time = 1;
 
 
 #ifndef BUILD_LK

@@ -507,10 +507,7 @@ void mtk_prepare_vdec_dvfs(void)
 void mtk_unprepare_vdec_dvfs(void)
 {
 #ifdef DEC_DVFS
-	int freq_idx = 0;
-
-	freq_idx = (vdec_freq_step_size == 0) ? 0 : (vdec_freq_step_size - 1);
-	mtk_pm_qos_update_request(&vdec_qos_req_f, vdec_freq_steps[freq_idx]);
+	mtk_pm_qos_update_request(&vdec_qos_req_f, PM_QOS_DEFAULT_VALUE);
 	mtk_pm_qos_remove_request(&vdec_qos_req_f);
 	free_hist(&vdec_hists, 0);
 	/* TODO: jobs error handle */
@@ -593,8 +590,12 @@ void mtk_vdec_dvfs_end(struct mtk_vcodec_ctx *ctx)
 		/* print error log */
 	}
 
-	freq_idx = (vdec_freq_step_size == 0) ? 0 : (vdec_freq_step_size - 1);
-	mtk_pm_qos_update_request(&vdec_qos_req_f, vdec_freq_steps[freq_idx]);
+	if (vdec_jobs == 0) {
+		mtk_pm_qos_update_request(&vdec_qos_req_f, PM_QOS_DEFAULT_VALUE);
+	} else {
+		freq_idx = (vdec_freq_step_size == 0) ? 0 : (vdec_freq_step_size - 1);
+		mtk_pm_qos_update_request(&vdec_qos_req_f, vdec_freq_steps[freq_idx]);
+	}
 	mutex_unlock(&ctx->dev->dec_dvfs_mutex);
 #endif
 }
